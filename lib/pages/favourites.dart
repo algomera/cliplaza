@@ -1,4 +1,5 @@
 import 'package:cliplaza/layout.dart';
+import 'package:cliplaza/state/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -71,36 +72,50 @@ class _FavouritesPageState extends State<FavouritesPage> {
       'title': 'Cioccolati italiani',
     }
   ];
+
+  int foodCount =
+      userState.value.liked.where((element) => element == 'food').length;
+
+  int shoppingCount =
+      userState.value.liked.where((element) => element == 'shop').length;
+
+  int proCount =
+      userState.value.liked.where((element) => element == 'pro').length;
+
   @override
   Widget build(BuildContext context) {
+    print(foodCount);
     return Scaffold(
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
           FavoritesBox(
-              onTap: () => showModal(
-                  'icona professionisti.svg',
-                  const Color(0xFF3884F9),
-                  'PROFESSIONISTI',
-                  professionistiItems),
-              color: const Color(0xFF3884F9),
-              icon: 'icona professionisti.svg',
-              image: 'AdobeStock_228965780_Preview.webp',
-              title: 'PROFESSIONISTI'),
+            onTap: () => showModal('icona professionisti.svg',
+                const Color(0xFF3884F9), 'PROFESSIONISTI', professionistiItems),
+            color: const Color(0xFF3884F9),
+            icon: 'icona professionisti.svg',
+            image: 'AdobeStock_228965780_Preview.webp',
+            title: 'PROFESSIONISTI',
+            counter: proCount,
+          ),
           FavoritesBox(
-              onTap: () => showModal('icona shopping.svg',
-                  const Color(0xFF5DCBA9), 'SHOPPING', shoppingItems),
-              color: const Color(0xFF5DCBA9),
-              icon: 'icona shopping.svg',
-              image: 'AdobeStock_333810258.webp',
-              title: 'SHOPPING'),
+            onTap: () => showModal('icona shopping.svg',
+                const Color(0xFF5DCBA9), 'SHOPPING', shoppingItems),
+            color: const Color(0xFF5DCBA9),
+            icon: 'icona shopping.svg',
+            image: 'AdobeStock_333810258.webp',
+            title: 'SHOPPING',
+            counter: shoppingCount,
+          ),
           FavoritesBox(
-              onTap: () => showModal(
-                  'icona food.svg', const Color(0xFFE3B957), 'FOOD', foodItems),
-              color: const Color(0xFFE3B957),
-              icon: 'icona food.svg',
-              image: 'AdobeStock_109039496.webp',
-              title: 'FOOD'),
+            onTap: () => showModal(
+                'icona food.svg', const Color(0xFFE3B957), 'FOOD', foodItems),
+            color: const Color(0xFFE3B957),
+            icon: 'icona food.svg',
+            image: 'AdobeStock_109039496.webp',
+            title: 'FOOD',
+            counter: foodCount,
+          ),
         ],
       ),
     );
@@ -176,12 +191,14 @@ class FavoritesBox extends StatelessWidget {
       required this.icon,
       required this.image,
       required this.title,
-      required this.onTap});
+      required this.onTap,
+      required this.counter});
   final String image;
   final String title;
   final String icon;
   final Color color;
   final void Function()? onTap;
+  final int counter;
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -236,15 +253,40 @@ class FavoritesBox extends StatelessWidget {
                   bottomRight: Radius.circular(10),
                 ),
               ),
-              child: Center(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: color,
-                    fontFamily: 'bold',
-                    fontSize: 14,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  counter == 0
+                      ? const SizedBox.shrink()
+                      : Positioned(
+                          left: 10,
+                          child: Container(
+                            decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Color(0xFFFDCE63)),
+                            width: 22,
+                            height: 22,
+                            child: Center(
+                              child: Text(
+                                counter.toString(),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontFamily: 'semibold',
+                                    fontSize: 13,
+                                    color: Color(0xFF171717)),
+                              ),
+                            ),
+                          ),
+                        ),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: color,
+                      fontFamily: 'bold',
+                      fontSize: 14,
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ],

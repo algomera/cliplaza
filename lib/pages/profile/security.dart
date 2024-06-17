@@ -12,8 +12,10 @@ class SecurityData extends StatefulWidget {
 
 class _SecurityDataState extends State<SecurityData> {
   TextEditingController passwordController =
-      TextEditingController(text: 'password');
+      TextEditingController(text: 'Password123!');
   bool obscureText = true;
+
+  final _formKey = GlobalKey<FormState>(); // Form key for validation
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,33 +42,47 @@ class _SecurityDataState extends State<SecurityData> {
               color: Color(0xFF0C0C0C), fontSize: 16, fontFamily: 'bold'),
         ),
         const SizedBox(height: 16),
-        CustomInput(
-          validator: (value) {
-            if (value!.isEmpty) {
-              return 'Questo campo è obbligatorio.';
-            } else if (PasswordValidator.isPasswordValid(value)) {
-              return 'La password deve contenere almeno 6 caratteri, un numero, un carattere speciale, una lettera minuscola e una maiuscola.';
-            }
-            return null;
-          },
-          obscureText: obscureText,
-          controller: passwordController,
-          type: TextInputType.visiblePassword,
-          suffix: InkWell(
-              onTap: () => setState(() => obscureText = !obscureText),
-              child:
-                  Icon(obscureText ? Icons.visibility : Icons.visibility_off)),
-          hintText: 'Password',
+        Form(
+          key: _formKey,
+          child: CustomInput(
+            errorMaxLines: 2,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Questo campo è obbligatorio.';
+              } else if (!PasswordValidator.isPasswordValid(value)) {
+                return 'La password deve contenere almeno 6 caratteri, un numero, un carattere speciale, una lettera minuscola e una maiuscola.';
+              }
+              return null;
+            },
+            obscureText: obscureText,
+            controller: passwordController,
+            type: TextInputType.visiblePassword,
+            suffix: InkWell(
+                onTap: () => setState(() => obscureText = !obscureText),
+                child: Icon(
+                    obscureText ? Icons.visibility : Icons.visibility_off)),
+            hintText: 'Password',
+          ),
         ),
-        const Text(
-          'Cambia Password',
-          style: TextStyle(
-              color: Color(0xFFA13BA7),
-              fontSize: 13,
-              decoration: TextDecoration.underline,
-              decorationColor: Color(0xFFA13BA7),
-              decorationThickness: 2),
-          textAlign: TextAlign.end,
+        InkWell(
+          splashColor: Colors.transparent,
+          onTap: () {
+            if (_formKey.currentState!.validate()) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Password cambiata!')),
+              );
+            }
+          },
+          child: const Text(
+            'Cambia Password',
+            style: TextStyle(
+                color: Color(0xFFA13BA7),
+                fontSize: 13,
+                decoration: TextDecoration.underline,
+                decorationColor: Color(0xFFA13BA7),
+                decorationThickness: 2),
+            textAlign: TextAlign.end,
+          ),
         ),
         const SizedBox(height: 16),
         const Text(

@@ -5,6 +5,7 @@ import 'package:cliplaza/components/loader.dart';
 import 'package:cliplaza/helpers/password_formatter.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -309,7 +310,9 @@ class _Form1State extends State<Form1> {
           CustomInput(
             controller: widget.cellulareController,
             type: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             hintText: 'Cellulare',
+            maxLength: 10,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Per favore inserisci il numero di telefono';
@@ -398,7 +401,9 @@ class AddressForm extends StatelessWidget {
                 child: CustomInput(
                   controller: numeroCivicoController,
                   type: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   hintText: 'N. Civico',
+                  maxLength: 4,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Per favore inserisci il numero civico';
@@ -412,6 +417,8 @@ class AddressForm extends StatelessWidget {
                 child: CustomInput(
                   controller: capController,
                   type: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  maxLength: 5,
                   hintText: 'Cap',
                   validator: (value) {
                     if (value == null || value.isEmpty) {

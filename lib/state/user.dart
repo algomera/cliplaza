@@ -69,4 +69,6 @@ class UserState {
       'quantity': 3
     }
   ].obs;
+
+  List liked = [];
 }

@@ -12,7 +12,8 @@ class CustomInput extends StatelessWidget {
       this.hintStyle,
       this.obscureText,
       this.validator,
-      this.inputFormatters});
+      this.inputFormatters,
+      this.maxLength});
   final String hintText;
   final Widget? suffix;
   final TextEditingController? controller;
@@ -22,11 +23,13 @@ class CustomInput extends StatelessWidget {
   final TextStyle? hintStyle;
   final String? Function(String?)? validator;
   final int? errorMaxLines;
+  final int? maxLength;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
+        maxLength: maxLength,
         validator: validator,
         obscuringCharacter: '●',
         inputFormatters: inputFormatters,
@@ -34,6 +37,7 @@ class CustomInput extends StatelessWidget {
         keyboardType: type ?? TextInputType.text,
         controller: controller,
         decoration: InputDecoration(
+          counterText: '',
           errorMaxLines: errorMaxLines ?? 1,
           suffixIcon: suffix,
           hintStyle: hintStyle ?? const TextStyle(color: Color(0xFFD1D1D1)),

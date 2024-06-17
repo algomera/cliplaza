@@ -165,6 +165,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
     setState(() {
       currentIndexCard++;
+      if (direction == CardSwiperDirection.right) {
+        userState.value.liked.add('food');
+      }
     });
     return true;
   }
