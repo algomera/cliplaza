@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 52 52">
+  <g id="Raggruppa_785" data-name="Raggruppa 785" transform="translate(-120 -414)">
+    <circle id="Ellisse_23" data-name="Ellisse 23" cx="26" cy="26" r="26" transform="translate(120 414)" fill="#fff"/>
+    <g id="Raggruppa_716" data-name="Raggruppa 716" transform="translate(120.084 414)">
+      <rect id="Rettangolo_11" data-name="Rettangolo 11" width="52" height="51" rx="1" transform="translate(-0.084)" fill="none"/>
+    </g>
+    <g id="apple-logo" transform="translate(126.645 416.178)">
+      <g id="Raggruppa_786" data-name="Raggruppa 786" transform="translate(2.104)">
+        <path id="Tracciato_408" data-name="Tracciato 408" d="M19.8,0h.309a9.311,9.311,0,0,1-2.345,7.017,7.268,7.268,0,0,1-6.4,3,9.032,9.032,0,0,1,2.387-6.8A10.309,10.309,0,0,1,19.8,0Z" transform="translate(6.295)"/>
+        <path id="Tracciato_409" data-name="Tracciato 409" d="M37.554,26.923v.086a25.3,25.3,0,0,1-3.62,6.979c-1.38,1.9-3.072,4.457-6.093,4.457-2.61,0-4.344-1.678-7.019-1.724-2.83-.046-4.386,1.4-6.973,1.768h-.882c-1.9-.275-3.433-1.78-4.55-3.135A27.468,27.468,0,0,1,2.1,19.551V17.606c.2-4.739,2.5-8.592,5.564-10.46a9.4,9.4,0,0,1,6.309-1.461,15.87,15.87,0,0,1,3.091.886,8.536,8.536,0,0,0,3.089.926,7.416,7.416,0,0,0,2.167-.663c2.131-.769,4.22-1.652,6.973-1.237a9.674,9.674,0,0,1,7.109,4.239,9.122,9.122,0,0,0-4.634,9.05A9.343,9.343,0,0,0,37.554,26.923Z" transform="translate(-2.104 4.994)"/>
+      </g>
+    </g>
+  </g>
+</svg>

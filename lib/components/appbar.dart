@@ -1,0 +1,36 @@
+import 'package:cliplaza/pages/filters/index.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
+  const CustomAppBar(
+      {super.key, required this.scaffoldKey, required this.navigatorKey});
+  final GlobalKey<ScaffoldState> scaffoldKey;
+  final GlobalKey<NavigatorState> navigatorKey;
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  @override
+  State<CustomAppBar> createState() => _CustomAppBarState();
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      title: Image.asset('assets/images/CLIPLAZA scritta nera.png'),
+      actions: [
+        InkWell(
+            onTap: () =>
+                widget.navigatorKey.currentState!.pushNamed(FilterPage.route),
+            child: SvgPicture.asset('assets/images/Icon ionic-ios-search.svg')),
+        const SizedBox(width: 20),
+        InkWell(
+            onTap: () => widget.scaffoldKey.currentState!.openEndDrawer(),
+            child: SvgPicture.asset('assets/images/Icon ionic-ios-menu.svg')),
+        const SizedBox(width: 17)
+      ],
+    );
+  }
+}
