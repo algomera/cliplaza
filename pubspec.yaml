@@ -39,7 +39,8 @@ dependencies:
   flutter_svg: ^2.0.7
   get: ^4.6.6
   flutter_card_swiper: ^7.0.1
-  card_swiper: ^3.0.1
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.11
 
 dev_dependencies:
   flutter_test:
@@ -52,9 +53,17 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
 
+flutter_native_splash:
+  color: "#0C0C0C"
+  image: "assets/images/logo_viola.png"
+  android: true
+  ios: true
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo_viola.png"
 # The following section is specific to Flutter packages.
 flutter:
   # The following line ensures that the Material Icons font is

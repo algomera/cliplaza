@@ -141,8 +141,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     return CardHomeTest(
                       key: ValueKey(index), // Ensure unique keys
                       color: colors[index],
-                      isImage: cards[index]['isImage'],
-                      videoUrl: cards[index]['videoUrl'],
+                      isImage: true,
+                      videoUrl: null,
                     );
                   },
                 ),

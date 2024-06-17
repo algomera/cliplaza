@@ -33,7 +33,10 @@ class _LoginPageState extends State<LoginPage> {
                   ))),
           const SizedBox(height: 20),
 
-          SvgPicture.asset('assets/images/logo_viola.svg'),
+          Image.asset(
+            'assets/images/logo_viola.png',
+            height: 80,
+          ),
           const SizedBox(height: 12),
           Image.asset('assets/images/CLIPLAZA scritta nera.png', height: 20),
           const SizedBox(height: 62),
@@ -109,7 +112,9 @@ class _LoginPageState extends State<LoginPage> {
           // ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             SvgPicture.asset('assets/images/apple.svg'),
-            SvgPicture.asset('assets/images/google.svg'),
+            const SizedBox(width: 36),
+            Image.asset('assets/images/google.png'),
+            const SizedBox(width: 36),
             SvgPicture.asset('assets/images/faceebook.svg'),
           ]),
           const SizedBox(height: 80),
