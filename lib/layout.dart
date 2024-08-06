@@ -1,4 +1,5 @@
 import 'package:cliplaza/components/appbar.dart';
+import 'package:cliplaza/components/rotating_chevron.dart';
 import 'package:cliplaza/pages/cart.dart';
 import 'package:cliplaza/pages/chat/index.dart';
 import 'package:cliplaza/pages/chat/show.dart';
@@ -18,7 +19,9 @@ import 'package:cliplaza/pages/profile/personal_data.dart';
 import 'package:cliplaza/pages/profile/security.dart';
 import 'package:cliplaza/pages/register.dart';
 import 'package:cliplaza/pages/show_product.dart';
+import 'package:cliplaza/services/airplane_mode.dart';
 import 'package:cliplaza/state/user.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -37,7 +40,23 @@ class MainNavigatorState extends State<MainNavigator>
   @override
   void initState() {
     super.initState();
-    // Add this class as an observer to listen for system events
+    Connectivity()
+        .onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      print(result);
+      if (result.contains(ConnectivityResult.none)) {
+        print('non sei connesso');
+        userState.value.hasConnection = false;
+      } else {
+        userState.value.hasConnection = true;
+      }
+      setState(() {});
+    });
+    AirplaneMode.setupAirplaneModeListener((isAirplaneModeOn) {
+      setState(() {
+        userState.value.airplaneMode = isAirplaneModeOn;
+      });
+    });
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -126,7 +145,7 @@ class MainNavigatorState extends State<MainNavigator>
     LoginPage.route,
     LandingPage.route
   ];
-
+  bool isExpanded = false;
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -167,89 +186,119 @@ class MainNavigatorState extends State<MainNavigator>
                   ],
                 ),
                 const SizedBox(height: 20),
-                InkWell(
-                  onTap: () {
-                    _scaffoldKey.currentState!.closeEndDrawer();
-                    navigatorKey.currentState!.pushNamed(FavouritesPage.route,
-                        arguments: {'args': 'pro'});
-                  },
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Color(0xFF3884F9)),
-                        child: SvgPicture.asset(
-                          'assets/images/icona professionisti.svg',
+                Theme(
+                  data: Theme.of(context)
+                      .copyWith(dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    onExpansionChanged: (bool expanded) {
+                      setState(() {
+                        isExpanded = expanded;
+                      });
+                    },
+                    tilePadding: EdgeInsets.zero,
+                    title: const Text(
+                      'Account',
+                      style: TextStyle(fontSize: 16, fontFamily: 'bold'),
+                    ),
+                    trailing: RotatingChevronIcon(isExpanded: isExpanded),
+                    children: <Widget>[
+                      ListTile(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 30),
+                        title: const Text(
+                          'I miei ordini',
+                          style: TextStyle(fontSize: 16),
                         ),
+                        onTap: () {
+                          // Handle sub item tap
+                        },
                       ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'PROFESSIONISTI',
-                        style: TextStyle(
-                            color: Color(0xFF3884F9),
-                            fontSize: 17,
-                            fontFamily: 'bold'),
+                      ListTile(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 30),
+                        title: const Text(
+                          'Il mio account',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        onTap: () {
+                          _scaffoldKey.currentState!.closeEndDrawer();
+                          navigatorKey.currentState!
+                              .pushNamed(PersonalDataPage.route);
+                        },
+                      ),
+                      ListTile(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 30),
+                        title: const Text(
+                          'Buoni regalo',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        onTap: () {
+                          // Handle sub item tap
+                        },
+                      ),
+                      ListTile(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 30),
+                        title: const Text(
+                          'Login e sicurezza',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        onTap: () {
+                          _scaffoldKey.currentState!.closeEndDrawer();
+                          navigatorKey.currentState!
+                              .pushNamed(SecurityData.route);
+                        },
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 28),
-                InkWell(
-                  onTap: () {
-                    _scaffoldKey.currentState!.closeDrawer();
-                    navigatorKey.currentState!.pushNamed(FavouritesPage.route,
-                        arguments: {'args': 'shop'});
-                  },
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Color(0xFF5DCBA9)),
-                        child: SvgPicture.asset(
-                          'assets/images/icona shopping.svg',
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'SHOPPING',
-                        style: TextStyle(
-                            color: Color(0xFF5DCBA9),
-                            fontSize: 17,
-                            fontFamily: 'bold'),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 28),
-                InkWell(
-                  onTap: () {
-                    _scaffoldKey.currentState!.closeDrawer();
-                    navigatorKey.currentState!.pushNamed(FavouritesPage.route,
-                        arguments: {'args': 'food'});
-                  },
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Color(0xFFE3B957)),
-                        child: SvgPicture.asset(
-                          'assets/images/icona food.svg',
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'FOOD',
-                        style: TextStyle(
-                            color: Color(0xFFE3B957),
-                            fontSize: 17,
-                            fontFamily: 'bold'),
-                      ),
-                    ],
-                  ),
-                ),
+                ListTile(
+                    onTap: () {
+                      _scaffoldKey.currentState!.closeEndDrawer();
+                      navigatorKey.currentState!.pushNamed(MyCart.route);
+                    },
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text(
+                      'Carrello',
+                      style: TextStyle(fontSize: 16, fontFamily: 'bold'),
+                    ),
+                    trailing: const Icon(Icons.chevron_right_outlined)),
+                ListTile(
+                    onTap: () {},
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text(
+                      'Buoni regalo e ricarica',
+                      style: TextStyle(fontSize: 16, fontFamily: 'bold'),
+                    ),
+                    trailing: const Icon(Icons.chevron_right_outlined)),
+                ListTile(
+                    onTap: () {
+                      _scaffoldKey.currentState!.closeEndDrawer();
+                      navigatorKey.currentState!
+                          .pushNamed(PersonalProfilePage.route);
+                    },
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text(
+                      'Impostazioni',
+                      style: TextStyle(fontSize: 16, fontFamily: 'bold'),
+                    ),
+                    trailing: const Icon(Icons.chevron_right_outlined)),
+                ListTile(
+                    onTap: () {
+                      _scaffoldKey.currentState!.closeEndDrawer();
+                      navigatorKey.currentState!.pushNamed(FaqPage.route);
+                    },
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text(
+                      'Centro assistenza',
+                      style: TextStyle(fontSize: 16, fontFamily: 'bold'),
+                    ),
+                    trailing: const Icon(Icons.chevron_right_outlined)),
+                ListTile(
+                    onTap: () {},
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text(
+                      'Acquisti',
+                      style: TextStyle(fontSize: 16, fontFamily: 'bold'),
+                    ),
+                    trailing: const Icon(Icons.chevron_right_outlined)),
               ],
             ),
           ),

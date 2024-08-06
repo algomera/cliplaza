@@ -1,7 +1,9 @@
 import 'package:cliplaza/pages/filters/index.dart';
+import 'package:cliplaza/state/user.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar(
@@ -19,7 +21,25 @@ class _CustomAppBarState extends State<CustomAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
-      title: Image.asset('assets/images/CLIPLAZA scritta nera.png'),
+      title: Row(
+        children: [
+          Image.asset('assets/images/CLIPLAZA scritta nera.png'),
+          const SizedBox(width: 10),
+          Obx(() => userState.value.hasConnection
+              ? const SizedBox.shrink()
+              : const Icon(
+                  Icons.signal_wifi_connected_no_internet_4_rounded,
+                  color: Colors.red,
+                )),
+          const SizedBox(width: 10),
+          Obx(() => userState.value.airplaneMode
+              ? const Icon(
+                  Icons.airplanemode_on_outlined,
+                  color: Colors.red,
+                )
+              : const SizedBox.shrink()),
+        ],
+      ),
       actions: [
         InkWell(
             onTap: () =>

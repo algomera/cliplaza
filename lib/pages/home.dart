@@ -3,6 +3,7 @@ import 'package:cliplaza/components/home_alert_dismissable.dart';
 import 'package:cliplaza/state/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:video_player/video_player.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,6 +19,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final CardSwiperController controller = CardSwiperController();
   late List<Color> colors;
   int currentIndexCard = 0;
+
+  // Video Controllers
+  final Map<int, VideoPlayerController> _videoControllers = {};
+  final Map<int, Future<void>> _initializeVideoPlayerFutures = {};
 
   @override
   void initState() {
@@ -56,6 +61,50 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         userState.value.firstTime = false;
       });
     }
+
+    _preloadNextTwoVideos(currentIndexCard);
+  }
+
+  @override
+  void dispose() {
+    _disposeAllVideoControllers();
+    controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _initializeVideo(int index, String? videoUrl) async {
+    if (videoUrl != null && !_videoControllers.containsKey(index)) {
+      final videoController =
+          VideoPlayerController.asset(cards[index]['videoUrl'])
+            ..setLooping(true);
+      _videoControllers[index] = videoController;
+      _initializeVideoPlayerFutures[index] =
+          videoController.initialize().then((value) => videoController.play());
+    }
+  }
+
+  void _disposeVideoController(int index) {
+    if (_videoControllers.containsKey(index)) {
+      _videoControllers[index]?.dispose();
+      _videoControllers.remove(index);
+      _initializeVideoPlayerFutures.remove(index);
+    }
+  }
+
+  void _disposeAllVideoControllers() {
+    _videoControllers.forEach((index, controller) {
+      controller.dispose();
+    });
+    _videoControllers.clear();
+    _initializeVideoPlayerFutures.clear();
+  }
+
+  Future<void> _preloadNextTwoVideos(int currentIndex) async {
+    final nextIndex1 = currentIndex + 1;
+
+    if (nextIndex1 < cards.length) {
+      await _initializeVideo(nextIndex1, cards[nextIndex1]['videoUrl']);
+    }
   }
 
   void _onSwipeDirectionChanged(CardSwiperDirection direction, int index) {
@@ -70,18 +119,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     });
   }
 
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
   List<Map<String, dynamic>> cards = [
-    {
-      'color': Colors.transparent,
-      'isImage': true,
-      'videoUrl': null,
-    },
     {
       'color': Colors.transparent,
       'isImage': true,
@@ -91,6 +129,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       'color': Colors.transparent,
       'isImage': false,
       'videoUrl': 'assets/video/video1.mp4',
+    },
+    {
+      'color': Colors.transparent,
+      'isImage': true,
+      'videoUrl': null,
     },
     {
       'color': Colors.transparent,
@@ -105,12 +148,42 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     {
       'color': Colors.transparent,
       'isImage': false,
-      'videoUrl': 'assets/video/video3.mp4',
-    }
+      'videoUrl': 'assets/video/video1.mp4',
+    },
+    {
+      'color': Colors.transparent,
+      'isImage': true,
+      'videoUrl': null,
+    },
+    {
+      'color': Colors.transparent,
+      'isImage': false,
+      'videoUrl': 'assets/video/video2.mp4',
+    },
+    {
+      'color': Colors.transparent,
+      'isImage': true,
+      'videoUrl': null,
+    },
+    {
+      'color': Colors.transparent,
+      'isImage': false,
+      'videoUrl': 'assets/video/video1.mp4',
+    },
   ];
 
   @override
   Widget build(BuildContext context) {
+    //altezza appbar
+    double appBarHeight = AppBar().preferredSize.height;
+
+    // altezza schermo
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    // altezza body scaffold
+    double bodyHeight =
+        screenHeight - appBarHeight - MediaQuery.of(context).padding.top;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -131,6 +204,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   onSwipe: _onSwipe,
                   onUndo: _onUndo,
                   numberOfCardsDisplayed: 2,
+                  backCardOffset: Offset(0, bodyHeight - 180),
+                  scale: 1,
                   padding: const EdgeInsets.all(12.0),
                   cardBuilder: (
                     context,
@@ -138,11 +213,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     horizontalThresholdPercentage,
                     verticalThresholdPercentage,
                   ) {
-                    return CardHomeTest(
-                      key: ValueKey(index), // Ensure unique keys
-                      color: colors[index],
-                      isImage: true,
-                      videoUrl: null,
+                    return SizedBox(
+                      height: bodyHeight - 200,
+                      child: CardHomeTest(
+                        key: ValueKey(index),
+                        color: colors[index],
+                        isImage: cards[index]['isImage'],
+                        videoUrl: cards[index]['videoUrl'],
+                        videoController: _videoControllers[index],
+                        videoInitializationFuture:
+                            _initializeVideoPlayerFutures[index],
+                      ),
                     );
                   },
                 ),
@@ -164,7 +245,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       'The card $previousIndex was swiped to the ${direction.name}. Now the card $currentIndex is on top',
     );
     setState(() {
+      _disposeVideoController(
+          previousIndex); // Dispose of the previous video's controller
       currentIndexCard++;
+      _preloadNextTwoVideos(currentIndexCard);
       if (direction == CardSwiperDirection.right) {
         userState.value.liked.add('food');
       }

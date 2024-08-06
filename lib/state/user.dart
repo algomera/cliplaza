@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 final userState = UserState().obs;
 
 class UserState {
+  bool hasConnection = false;
+  bool airplaneMode = false;
   int bottomNavIndex = 0;
   bool firstTime = true;
   void changeIndex(int index) {

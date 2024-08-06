@@ -147,20 +147,31 @@ class _CardHomeState extends State<CardHome>
   }
 }
 
-class CardHomeTest extends StatelessWidget {
+class CardHomeTest extends StatefulWidget {
   const CardHomeTest({
     Key? key,
     required this.color,
     required this.isImage,
     this.videoUrl,
+    this.videoController,
+    this.videoInitializationFuture,
   }) : super(key: key);
 
   final Color color;
   final bool isImage;
   final String? videoUrl;
+  final VideoPlayerController? videoController;
+  final Future<void>? videoInitializationFuture;
 
   @override
+  _CardHomeTestState createState() => _CardHomeTestState();
+}
+
+class _CardHomeTestState extends State<CardHomeTest>
+    with AutomaticKeepAliveClientMixin {
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Stack(
       children: [
         InkWell(
@@ -169,9 +180,31 @@ class CardHomeTest extends StatelessWidget {
             alignment: Alignment.center,
             child: Stack(
               children: [
-                if (videoUrl != null)
-                  Positioned.fill(
-                    child: VideoPlayerWidget(videoUrl: videoUrl ?? ''),
+                if (widget.videoController != null)
+                  FutureBuilder(
+                    future: widget.videoInitializationFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: SizedBox.expand(
+                            child: FittedBox(
+                              fit: BoxFit.cover,
+                              child: SizedBox(
+                                width: widget.videoController!.value.size.width,
+                                height:
+                                    widget.videoController!.value.size.height,
+                                child: VideoPlayer(widget.videoController!),
+                              ),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
                   ),
                 Container(
                   padding:
@@ -181,7 +214,7 @@ class CardHomeTest extends StatelessWidget {
                       MediaQuery.of(context).padding.top -
                       50 -
                       100,
-                  decoration: isImage
+                  decoration: widget.isImage
                       ? BoxDecoration(
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(10),
@@ -236,7 +269,7 @@ class CardHomeTest extends StatelessWidget {
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: color,
+                      color: widget.color,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -248,79 +281,9 @@ class CardHomeTest extends StatelessWidget {
       ],
     );
   }
-}
-
-class VideoPlayerWidget extends StatefulWidget {
-  final String videoUrl;
-
-  const VideoPlayerWidget({Key? key, required this.videoUrl}) : super(key: key);
 
   @override
-  _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
-}
-
-class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  late VideoPlayerController _controller;
-  late Future<void> _initializeVideoPlayerFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeController();
-  }
-
-  void _initializeController() {
-    _controller = VideoPlayerController.asset(widget.videoUrl);
-    _initializeVideoPlayerFuture = _controller.initialize().then((_) {
-      setState(() {});
-    });
-    _controller.setLooping(true);
-    _controller.play();
-
-    debugPrint('Initializing video: ${widget.videoUrl}');
-  }
-
-  @override
-  void didUpdateWidget(covariant VideoPlayerWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.videoUrl != widget.videoUrl) {
-      _controller.dispose();
-      _initializeController();
-      debugPrint('Updated video: ${widget.videoUrl}');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _initializeVideoPlayerFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: FittedBox(
-              fit: BoxFit.cover,
-              child: SizedBox(
-                width: _controller.value.size.width,
-                height: _controller.value.size.height,
-                child: VideoPlayer(_controller),
-              ),
-            ),
-          );
-        } else {
-          return FittedBox(
-            child: Container(color: Colors.amber),
-          );
-        }
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  bool get wantKeepAlive => true;
 }
 
 // import 'dart:math';
