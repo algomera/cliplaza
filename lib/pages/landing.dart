@@ -29,6 +29,7 @@ class _LandingPageState extends State<LandingPage> {
     super.dispose();
   }
 
+  //funzione che mostra un video random tra i 3 scelti
   void playRandomVideo() {
     int randomIndex = Random().nextInt(videos.length);
     String randomVideo = videos[randomIndex];

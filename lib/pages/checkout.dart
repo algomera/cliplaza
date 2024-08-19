@@ -19,12 +19,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   late String buttonText =
       'Continua : ${calculateTotalPrice().toStringAsFixed(2)}€';
 
+  //funzione che ritorna il colore dei 2 bordi in alto, a sinistra e destra del numero 2 (step)
   Color getBorderColor(int index) {
-    // if (currentStep == index) {
-    //   return Colors.transparent;
-    // } else if (currentStep >= (index + 1)) {
-    //   return const Color(0xFF7A5DCB);
-    // }
     if (currentStep == index) {
       return const Color(0xFF7A5DCB);
     }

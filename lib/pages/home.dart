@@ -72,17 +72,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  //inizializza il video e mettilo in play
   Future<void> _initializeVideo(int index, String? videoUrl) async {
     if (videoUrl != null && !_videoControllers.containsKey(index)) {
-      final videoController =
-          VideoPlayerController.asset(cards[index]['videoUrl'])
-            ..setLooping(true);
+      final videoController = VideoPlayerController.asset(videoUrl)
+        ..setLooping(true);
       _videoControllers[index] = videoController;
       _initializeVideoPlayerFutures[index] =
-          videoController.initialize().then((value) => videoController.play());
+          videoController.initialize().then((_) {
+        videoController.play();
+        print('Video $index initialized and playing');
+      });
     }
   }
 
+  //distruggi il controller
   void _disposeVideoController(int index) {
     if (_videoControllers.containsKey(index)) {
       _videoControllers[index]?.dispose();
@@ -91,6 +95,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
+  //distruggi tutti i controllers
   void _disposeAllVideoControllers() {
     _videoControllers.forEach((index, controller) {
       controller.dispose();
@@ -99,14 +104,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _initializeVideoPlayerFutures.clear();
   }
 
+  //preload di (al momento) un solo video
   Future<void> _preloadNextTwoVideos(int currentIndex) async {
-    final nextIndex1 = currentIndex + 1;
+    try {
+      // Preload the next video
+      final nextIndex1 = currentIndex + 1;
+      if (nextIndex1 < cards.length) {
+        await _initializeVideo(nextIndex1, cards[nextIndex1]['videoUrl']);
+      }
 
-    if (nextIndex1 < cards.length) {
-      await _initializeVideo(nextIndex1, cards[nextIndex1]['videoUrl']);
+      // Add a small delay before preloading the next video
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // Preload the second next video
+      final nextIndex2 = currentIndex + 2;
+      if (nextIndex2 < cards.length) {
+        await _initializeVideo(nextIndex2, cards[nextIndex2]['videoUrl']);
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
+//funzione che viene richiamata al momento dello swipe, rimane in ascolto del cambio di direzione della card
   void _onSwipeDirectionChanged(CardSwiperDirection direction, int index) {
     setState(() {
       if (direction == CardSwiperDirection.left) {
@@ -119,6 +139,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     });
   }
 
+  //lista momentaneamente statica delle cards
   List<Map<String, dynamic>> cards = [
     {
       'color': Colors.transparent,
@@ -236,6 +257,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
+  //funzione richiamata alla fine dell swipe:
+  //distrugge il controller
+  //precarica il prossimo video
+  //aggiunge alla lista dei "like" dell'utente un item di tipo "food" (al momento statico)
   bool _onSwipe(
     int previousIndex,
     int? currentIndex,
@@ -256,6 +281,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return true;
   }
 
+  //funzione che viene richiamata quando l'utente stoppa lo swipe
+  //banalmente quando stacca il dito dallo schermo durante lo swipe
   bool _onUndo(
     int? previousIndex,
     int currentIndex,

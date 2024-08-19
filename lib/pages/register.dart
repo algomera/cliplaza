@@ -66,6 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
     content = forms[currentFormIndex];
   }
 
+//incrementa la barra del progresso viola del 25% se lo step è validato
   void incrementProgress() {
     setState(() {
       progress += 0.25;
@@ -75,6 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
+//decrementa la barra del progresso viola del 25% se lo step è validato
   void decrementProgress() {
     setState(() {
       progress -= 0.25;
@@ -84,12 +86,7 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  void addOrRemoveToList(list, item) {
-    setState(() {
-      list.contains(item) ? list.remove(item) : list.add(item);
-    });
-  }
-
+//aggiorna il titolo della registrazione basato sullo step corrente
   void updateContent(int index) {
     setState(() {
       currentFormIndex = index;
@@ -114,6 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
+//funzione di handle e validazione dei vari form per questo widget
   void handleNext() {
     if (currentFormIndex == 0 && !_formKey.currentState!.validate()) {
       return;
@@ -131,6 +129,9 @@ class _RegisterPageState extends State<RegisterPage> {
     updateContent(currentFormIndex + 1);
   }
 
+//handle del back button in alto a sinistra
+//se ci troviamo al primo step, torna alla pagina precedente
+//altrimenti decrementa di 1 lo step
   void handleBack() {
     if (currentFormIndex == 0) {
       Navigator.pop(context);
