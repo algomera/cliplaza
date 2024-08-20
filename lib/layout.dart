@@ -38,6 +38,10 @@ class MainNavigator extends StatefulWidget {
 class MainNavigatorState extends State<MainNavigator>
     with WidgetsBindingObserver {
   @override
+
+  //all'avvio dell'app controlla se l'utente è:
+  // connesso
+  // ha modalità aereo attiva
   void initState() {
     super.initState();
     Connectivity()
@@ -72,6 +76,7 @@ class MainNavigatorState extends State<MainNavigator>
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  //funzione che rimuove / mostra la bottom bar su determinate pagine
   void _updateBottomBarVisibility(String? routeName) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -114,6 +119,7 @@ class MainNavigatorState extends State<MainNavigator>
   }
 
   int currentIndex = 0;
+  // funzione di tap per la bottom bar
   void _onItemTapped(int index) {
     final navigator = navigatorKey.currentState;
     if (navigator == null) return;
@@ -469,6 +475,7 @@ class MainNavigatorState extends State<MainNavigator>
   }
 }
 
+//observer per la bottombar
 class BottomNavBarObserver extends NavigatorObserver {
   final Function(String?) updateVisibility;
 

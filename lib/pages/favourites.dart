@@ -73,18 +73,18 @@ class _FavouritesPageState extends State<FavouritesPage> {
     }
   ];
 
+  //counter delle card nella home di tipo "food" a cui l'utente ha messo like
   int foodCount =
       userState.value.liked.where((element) => element == 'food').length;
-
+//counter delle card nella home di tipo "shopping" a cui l'utente ha messo like
   int shoppingCount =
       userState.value.liked.where((element) => element == 'shop').length;
-
+//counter delle card nella home di tipo "professionisti" a cui l'utente ha messo like
   int proCount =
       userState.value.liked.where((element) => element == 'pro').length;
 
   @override
   Widget build(BuildContext context) {
-    print(foodCount);
     return Scaffold(
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),

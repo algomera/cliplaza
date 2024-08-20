@@ -7,10 +7,6 @@ class UserState {
   bool airplaneMode = false;
   int bottomNavIndex = 0;
   bool firstTime = true;
-  void changeIndex(int index) {
-    bottomNavIndex = index;
-    userState.refresh();
-  }
 
   List chats = [
     {'name': 'Zara Milano'},
