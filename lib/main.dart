@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 import 'package:cliplaza/layout.dart';
 import 'package:cliplaza/pages/cart.dart';
 import 'package:cliplaza/pages/chat/index.dart';
@@ -18,9 +22,12 @@ import 'package:cliplaza/pages/profile/personal_data.dart';
 import 'package:cliplaza/pages/profile/security.dart';
 import 'package:cliplaza/pages/register.dart';
 import 'package:cliplaza/pages/show_product.dart';
-import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
